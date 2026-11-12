@@ -2,9 +2,26 @@
 
 A walkable pixel-art night market for watching AI agent swarms work.
 
+![A walk through the market: hovering booths, opening a team booth, and new booths appearing](docs/demo.gif)
+
+The same demo with sound: [docs/demo.mp4](docs/demo.mp4)
+
 Each booth is a job. A booth can be one agent or a team of agents. Lit booths are working, vendors say their latest update out loud, couriers run tickets to the Orders counter, and the market grows a new lane when more agents are hired. You walk around with the arrow keys, WASD, or by tapping, and open a booth's card to read what its agents are doing.
 
+## Screenshots
+
+| The gate and the Orders counter | A team booth and its card |
+| --- | --- |
+| ![The market gate with four booths and the Orders counter](docs/market.png) | ![The Backlog team booth with its card showing 9 of 24 done](docs/team-booth.png) |
+
+![The zoomed-out map view with a new booth added](docs/map.png)
+
+A one-page breakdown of how it works, how it was built and how booths compose: [docs/how-it-works.png](docs/how-it-works.png)
+
 ## What is here
+
+- `skills/night-market-swarm/` A skill that tells Claude how to publish the page and run a swarm on it.
+- `docs/` The demo and screenshots shown here.
 
 - `page/` The scene itself: one `index.html` plus its art. It reads its state from a small document store and draws whatever is there.
 - `art/` The Python scripts that draw every sprite and background (Pillow only, no image assets by hand).
@@ -35,6 +52,12 @@ Every night market booth is composed in the browser from parts, so a new agent c
 ### Team booths
 
 Set `crew` to the number of agents working a booth and `total` to the number of units of work. Each agent posts an event with `worker`, a `unit` id and `done: true` when it finishes a unit. The booth shows the headcount, a progress bar and a count such as `12/24`.
+
+## Use it with Claude
+
+Copy `skills/night-market-swarm/SKILL.md` into your Claude skills, or point Claude at this repo and ask it to follow that file. On first use it publishes the page from `page/` as your own private artifact, then opens a market for each job you give it.
+
+This needs a cloud Claude Code session with subagents and the Claude artifact tools. The first-time setup steps in the skill have not been tested on a second account yet, so expect to adjust them.
 
 ## Sound
 
