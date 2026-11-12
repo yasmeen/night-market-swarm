@@ -53,11 +53,24 @@ Every night market booth is composed in the browser from parts, so a new agent c
 
 Set `crew` to the number of agents working a booth and `total` to the number of units of work. Each agent posts an event with `worker`, a `unit` id and `done: true` when it finishes a unit. The booth shows the headcount, a progress bar and a count such as `12/24`.
 
-## Use it with Claude
+## Install
 
-Copy `skills/night-market-swarm/SKILL.md` into your Claude skills, or point Claude at this repo and ask it to follow that file. On first use it publishes the page from `page/` as your own private artifact, then opens a market for each job you give it.
+You need a Claude plan with Claude Code on the web, since the swarm runs in a cloud session with subagents and artifact tools.
 
-This needs a cloud Claude Code session with subagents and the Claude artifact tools. The first-time setup steps in the skill have not been tested on a second account yet, so expect to adjust them.
+1. Start a new Claude Code session in the Claude app or at claude.ai/code.
+2. Send it this, with your own job at the end:
+
+   ```
+   Clone github.com/yasmeen/night-market-swarm, follow skills/night-market-swarm/SKILL.md, and open a market for: <your job>
+   ```
+
+3. On the first run Claude publishes the page from `page/` as a private artifact in your account and gives you its link. Later runs reuse that page and open a new market on it.
+
+To keep it as a permanent skill, zip the `skills/night-market-swarm` folder and upload it in Claude's Skills settings ([how to add a custom skill](https://support.claude.com/en/articles/12512180-using-skills-in-claude)). Claude still needs this repo for the first run, because that is where the page files are.
+
+The first-run setup has only been done on one account so far. If a step fails, open an issue with what Claude said.
+
+![How Night Market works: you give Claude a job, a lead agent splits it, each type of work gets a stall, and the page redraws from the agents' updates](docs/diagram.png)
 
 ## Sound
 
