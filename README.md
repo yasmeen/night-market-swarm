@@ -6,7 +6,7 @@ A walkable pixel-art night market for watching AI agent swarms work.
 
 The same demo with sound: [docs/demo.mp4](docs/demo.mp4)
 
-Each booth is a job. A booth can be one agent or a team of agents. Lit booths are working, vendors say their latest update out loud, couriers run tickets to the Orders counter, and the market grows a new lane when more agents are hired. You walk around with the arrow keys, WASD, or by tapping, and open a booth's card to read what its agents are doing.
+Each booth is a job. A booth can be one agent or a team of agents. Lit booths are working, vendors say their latest update out loud, couriers run tickets to the Orders counter, and the market grows a new lane when more agents are hired. You walk around with the arrow keys, WASD, or by tapping, and open a booth's card to read what its agents are doing. On a phone, tap a booth to open its card and hold and drag to walk.
 
 ## Screenshots
 

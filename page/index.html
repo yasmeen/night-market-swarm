@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Night Market</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=Silkscreen&display=swap">
 <style>
   :root { --ink: #0e0c1a; --amber: #fcd67c; --red: #c83c3c; --card: #faf0d6; --paper: #fffaf0; --sub: #5a4a50; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; overflow: hidden; background: #1c1a30; color: var(--card); font-family: 'Pixelify Sans', sans-serif; }
-  #view { position: fixed; inset: 0; overflow: hidden; cursor: pointer; touch-action: manipulation; --u: 3px; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #1c1a30; color: var(--card); font-family: 'Pixelify Sans', sans-serif; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+  #view { position: fixed; inset: 0; overflow: hidden; cursor: pointer; touch-action: none; --u: 3px; }
   #world { position: absolute; left: 0; top: 0; will-change: transform; image-rendering: pixelated; }
   #ground img { position: absolute; left: 0; width: calc(424 * var(--u)); image-rendering: pixelated; pointer-events: none; }
   #title { position: absolute; z-index: 1; display: flex; align-items: center; justify-content: center; font-family: 'Silkscreen', monospace; line-height: 1; white-space: nowrap; overflow: hidden; text-transform: uppercase; pointer-events: none; }
@@ -22,7 +22,7 @@
   .stall .sign { position: absolute; left: 50%; bottom: calc(100% - 1 * var(--u)); transform: translateX(-50%); padding: calc(1.5 * var(--u)) calc(3.5 * var(--u)); font-family: 'Silkscreen', monospace; font-size: calc(7.5 * var(--u)); line-height: 1; white-space: nowrap; text-transform: uppercase; background: var(--card); color: var(--red); border: calc(1 * var(--u)) solid var(--ink); }
   .stall.dim .sign { background: #bfb8d2; color: #4a4660; }
   @keyframes run { to { background-position-x: calc(-76 * var(--u)); } }
-  .stall:hover::after, .stall:focus-visible::after, .stall.open::after, .stall.near::after { content: ""; position: absolute; inset: calc(-13 * var(--u)) calc(-2 * var(--u)) calc(-2 * var(--u)); border: calc(1 * var(--u)) solid var(--amber); box-shadow: 0 0 0 calc(1 * var(--u)) var(--ink); border-radius: calc(2 * var(--u)); }
+  .stall:focus-visible::after, .stall.open::after, .stall.near::after, .stall.hov::after { content: ""; position: absolute; inset: calc(-13 * var(--u)) calc(-2 * var(--u)) calc(-2 * var(--u)); border: calc(1 * var(--u)) solid var(--amber); box-shadow: 0 0 0 calc(1 * var(--u)) var(--ink); border-radius: calc(2 * var(--u)); }
   .stall:focus { outline: none; }
   .stall .bar { position: absolute; left: calc(9 * var(--u)); top: calc(37 * var(--u)); width: calc(58 * var(--u)); height: calc(5 * var(--u)); background: #2a2440; display: none; }
   .stall .bar i { display: block; height: 100%; background: #8fe0a0; transition: width .4s steps(6); }
@@ -47,6 +47,7 @@
   #hud select, #hud span, #hud button { font-family: 'Silkscreen', monospace; font-size: 13px; padding: 7px 9px; background: var(--card); color: var(--ink); border: 3px solid var(--ink); border-radius: 4px; box-shadow: 3px 3px 0 var(--ink); max-width: 60vw; }
   #hud span { background: #2a2846; color: var(--card); }
   #hud select, #hud button { min-height: 44px; cursor: pointer; }
+  #tools { display: contents; }
   #hud select { -webkit-appearance: none; appearance: none; padding-right: 34px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0h12v2h-2v2H8v2H6v2H6V6H4V4H2V2H0z' fill='%230e0c1a'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
 
   #card { position: absolute; z-index: 2000; width: 300px; padding: 14px; display: none; flex-direction: column; gap: 10px; background: var(--card); color: #2c2633; border: 4px solid var(--ink); border-radius: 6px; box-shadow: 5px 5px 0 var(--ink); cursor: default; }
@@ -66,7 +67,18 @@
   #card button.main { background: #f1c06a; }
   #empty { position: absolute; z-index: 1400; left: 50%; top: 45%; transform: translate(-50%, -50%); max-width: 80%; padding: 12px 14px; background: var(--card); color: #2c2633; border: 4px solid var(--ink); border-radius: 6px; box-shadow: 5px 5px 0 var(--ink); font-size: 16px; text-align: center; display: none; }
   @media (max-width: 700px) {
-    #card { position: fixed; left: 8px !important; right: 8px; bottom: 8px; top: auto !important; width: auto; }
+    #card { position: fixed; left: 8px !important; right: 8px; bottom: calc(8px + env(safe-area-inset-bottom)); top: auto !important; width: auto; max-height: 56vh; overflow-y: auto; touch-action: pan-y; padding: 12px 12px 0; gap: 8px; }
+    #card .btns { position: sticky; bottom: 0; background: var(--card); padding: 4px 0 12px; margin-top: -4px; }
+    #card > :last-child:not(.btns) { margin-bottom: 12px; }
+    #card ul { max-height: none; }
+    #card li:nth-child(n+4) { display: none; }
+    #hud { top: calc(8px + env(safe-area-inset-top)); left: 8px; max-width: calc(100vw - 16px); }
+    #hud select, #hud span, #hud button { font-size: 10px; padding: 6px 7px; border-width: 2px; box-shadow: 2px 2px 0 var(--ink); }
+    #hud span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100vw - 16px); }
+    #tools { position: fixed; left: 8px; bottom: calc(10px + env(safe-area-inset-bottom)); display: flex; gap: 8px; }
+    #tools button { font-size: 11px !important; padding: 6px 10px !important; }
+    body.sheet #tools { display: none; }
+    #hint { bottom: calc(64px + env(safe-area-inset-bottom)); white-space: nowrap; }
   }
 </style>
 </head>
@@ -82,7 +94,7 @@
   <div id="empty">Nothing is open yet. Ask Claude to open a market for a project.</div>
   <div id="card" role="dialog" aria-label="Stall details"></div>
 </div>
-<div id="hud"><select id="pick" aria-label="Choose a market" hidden></select><span id="state">Opening</span><button id="zoom" type="button" aria-pressed="false">Map</button><button id="snd" type="button" aria-pressed="true">Sound on</button></div>
+<div id="hud"><select id="pick" aria-label="Choose a market" hidden></select><span id="state">Opening</span><div id="tools"><button id="zoom" type="button" aria-pressed="false">Map</button><button id="snd" type="button" aria-pressed="true">Sound on</button></div></div>
 <script>
 /* ---------- scene packs: everything scene-specific lives here ---------- */
 const THEMED = ['orders', 'security', 'design', 'seo', 'code', 'backlog', 'review', 'docs', 'research', 'marketing', 'data'];
@@ -112,6 +124,7 @@ let known = null, stallsLoaded = false, seenEvents = null, placed = new Map(), p
 const els = new Map();
 const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 const canHover = window.matchMedia && matchMedia('(hover: hover)').matches;
+const small = () => window.innerWidth <= 700;
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
 const hhmm = at => { const d = new Date(at); return isNaN(d) ? String(at || '') : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); };
 const hash = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
@@ -180,7 +193,10 @@ function nearStall() {
 function camera(dt) {
   const vw = view.clientWidth / S, vh = view.clientHeight / S;
   const tx = WW > vw ? Math.max(0, Math.min(WW - vw, you.x - vw / 2)) : -(vw - WW) / 2;
-  const ty = WH > vh ? Math.max(0, Math.min(WH - vh, you.y - vh / 2)) : -(vh - WH) / 2;
+  // On phones an open card covers the bottom of the screen, so centre the open booth in the space above it.
+  const sheet = small() && pinned && openId && placed.get(openId) ? (card.offsetHeight + 16) / S : 0;
+  const fy = sheet ? placed.get(openId).pos[1] + 20 : you.y, fh = vh - sheet;
+  const ty = sheet ? Math.max(0, Math.min(Math.max(0, WH - fh), fy - fh / 2)) : WH > vh ? Math.max(0, Math.min(WH - vh, you.y - vh / 2)) : -(vh - WH) / 2;
   const k = cam.set ? Math.min(1, dt * 8) : 1;
   cam.x += (tx - cam.x) * k; cam.y += (ty - cam.y) * k; cam.set = true;
   world.style.transform = 'translate3d(' + Math.round(-cam.x * S) + 'px,' + Math.round(-cam.y * S) + 'px,0)';
@@ -231,6 +247,8 @@ function sfx(kind, delay) {
 sndLabel();
 sndBtn.addEventListener('click', e => { e.stopPropagation(); soundOn = !soundOn; try { localStorage.setItem('nm-sound', soundOn ? 'on' : 'off'); } catch (err) {} sndLabel(); unlock(); if (soundOn) setTimeout(() => sfx('open'), 60); });
 window.addEventListener('pointerdown', unlock, true);
+window.addEventListener('touchend', unlock, true);
+window.addEventListener('click', unlock, true);
 window.addEventListener('keydown', unlock, true);
 function stepYou(dt) {
   let dx = 0, dy = 0, moving = false;
@@ -256,6 +274,7 @@ function stepYou(dt) {
   for (const [id, b] of els) b.classList.toggle('near', id === near && !pinned);
   if (near && !pinned && canHover) { const st = stalls.find(s => s.id === near); hint.textContent = 'E to talk to ' + (st ? nameOf(st) : near).toUpperCase(); hint.hidden = false; }
   else if (!pinned && canHover && petNear()) { hint.textContent = 'E to pet'; hint.hidden = false; }
+  else if (tip && !pinned) { hint.textContent = 'Tap a booth. Drag to walk.'; hint.hidden = false; }
   else hint.hidden = true;
 }
 
@@ -353,9 +372,24 @@ view.addEventListener('click', e => {
   const r = view.getBoundingClientRect();
   walkTo((e.clientX - r.left) / S + cam.x, (e.clientY - r.top) / S + cam.y);
 });
+// Touch: hold and drag to walk toward your finger.
+let dragAt = 0;
+view.addEventListener('touchmove', e => {
+  if (card.contains(e.target) || pinned || e.touches.length !== 1) return;
+  e.preventDefault();
+  const now = performance.now(); if (now - dragAt < 110) return; dragAt = now;
+  const r = view.getBoundingClientRect(), t = e.touches[0];
+  walkTo((t.clientX - r.left) / S + cam.x, (t.clientY - r.top) / S + cam.y);
+}, { passive: false });
+let tip = !canHover;
+window.addEventListener('touchstart', () => setTimeout(() => { tip = false; }, 2500), { once: true });
 function scale() {
   const vw = view.clientWidth, vh = view.clientHeight;
-  S = zoomOut ? Math.max(1, Math.floor(Math.min(vw / WW, vh / 264))) : Math.max(2, Math.min(6, Math.floor(Math.min(vw / 300, vh / 190))));
+  if (small()) {
+    // Phones: step the scale in device pixels so the art stays crisp, and show more of the market than a whole-number scale allows.
+    const dpr = Math.max(1, Math.round(window.devicePixelRatio || 1));
+    S = zoomOut ? Math.min(1, vw / WW) : Math.max(dpr, Math.round(Math.min(vw / 240, vh / 190) * dpr)) / dpr;
+  } else S = zoomOut ? Math.max(1, Math.floor(Math.min(vw / WW, vh / 264))) : Math.max(2, Math.min(6, Math.floor(Math.min(vw / 300, vh / 190))));
   view.style.setProperty('--u', S + 'px');
   cam.set = false;
   if (openId) show(openId, pinned);
@@ -516,8 +550,10 @@ function render() {
       b.append(Object.assign(el('img', 'glow'), { src: 'glow.png', alt: '' }), Object.assign(el('img', 'body'), { alt: '' }), Object.assign(el('img', 'bub'), { alt: '' }), el('span', 'sign'), el('span', 'bar'), el('span', 'count'));
       b.children[4].appendChild(el('i'));
       if (known && !known.has(st.id)) { b.classList.add('spawn'); setTimeout(() => b.classList.remove('spawn'), 700); sfx('pop'); }
-      b.addEventListener('mouseenter', () => { if (!pinned) { show(st.id, false); sfx('hover'); } });
-      b.addEventListener('mouseleave', () => { if (!pinned) hide(); });
+      if (canHover) {
+        b.addEventListener('mouseenter', () => { b.classList.add('hov'); if (!pinned) { show(st.id, false); sfx('hover'); } });
+        b.addEventListener('mouseleave', () => { b.classList.remove('hov'); if (!pinned) hide(); });
+      }
       b.addEventListener('click', e => { e.stopPropagation(); visit(st.id); });
       stallsEl.appendChild(b);
       els.set(st.id, b);
@@ -595,7 +631,7 @@ function fill() {
   }
 }
 function show(id, pin) {
-  openId = id; pinned = pin;
+  openId = id; pinned = pin; document.body.classList.toggle('sheet', pin);
   for (const [k, b] of els) b.classList.toggle('open', k === id);
   fill();
   card.classList.add('on');
@@ -611,7 +647,7 @@ function placeCard() {
   card.style.left = left + 'px';
   card.style.top = Math.max(60, Math.min(vr.height - card.offsetHeight - 6, r.top - 12 * S)) + 'px';
 }
-function hide() { if (pinned && openId) sfx('close'); openId = null; pinned = false; card.classList.remove('on'); for (const b of els.values()) b.classList.remove('open'); }
+function hide() { if (pinned && openId) sfx('close'); openId = null; pinned = false; document.body.classList.remove('sheet'); card.classList.remove('on'); for (const b of els.values()) b.classList.remove('open'); }
 
 /* ---------- data ---------- */
 const rows = snap => snap.docs.map(d => Object.assign({}, d.data(), { id: d.id }));
